@@ -5,7 +5,7 @@ Config.Locale = 'en'
 Config.DisplayRadar = true -- Only show radar when player is into vehicle.
 Config.SpeedUnit = 'kmh' -- kmh/mph
 Config.EnableDobleJob = true -- Only for esx
-Config.Logo = "https://cdn.discordapp.com/attachments/896182274012360725/901979947944509440/iloveyourmom72.png" -- Server logo
+Config.Logo = "" -- Server logo
 Config.Commands = {
     RefreshRate = 'refreshrate'
 }
