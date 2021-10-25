@@ -4,6 +4,8 @@ game 'gta5'
 author 'Patron and Mini'
 description 'Simple RP Hud for ESX/QBCore'
 
+lua54 'yes'
+
 ui_page 'html/index.html'
 
 client_scripts {

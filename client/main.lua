@@ -8,7 +8,7 @@ Script = {
     }
 }
 PLAYER = {
-    RefreshRate = 2, -- Default hud refresh rate
+    RefreshRate = 1, -- Default hud refresh rate
     Hunger = 0,
     Thirst = 0,
     Stress = 0,
@@ -48,7 +48,6 @@ CreateThread(function()
     local dobleJob = nil
     while true do
         if PLAYER.Loaded then
-            getPlayerStatus()
             local Player = PlayerPedId()
             local PlayerCoords = GetEntityCoords(Player)
             local street1, street2 = GetStreetNameAtCoord(PlayerCoords, Citizen.ResultAsInteger(), Citizen.ResultAsInteger())
@@ -63,12 +62,13 @@ CreateThread(function()
                 local PD = QBCore.PlayerData
                 job = PD.job.label.." - "..PD.job.grade.name
             end
+            getPlayerStatus()
             SendNUIMessage({
                 bank = getPlayerMoney('bank'),
                 money = getPlayerMoney(cash),
-                vehicle = IsPedInAnyVehicle(Player),
+                vehicle = (PlayerVehicle ~= 0),
                 main_street = Script.Zones[GetNameOfZone(PlayerCoords)],
-                substreet = GetStreetNameFromHashKey(street2), 
+                substreet = GetStreetNameFromHashKey(street2),
                 stamina = 100 - GetPlayerSprintStaminaRemaining(PlayerId()),
                 pause = IsPauseMenuActive(), 
                 health = GetEntityHealth(Player), 
@@ -89,7 +89,6 @@ CreateThread(function()
                 job2 = dobleJob
             })
 
-            HideHudComponentThisFrame(1) -- WANTED_STARS
             HideHudComponentThisFrame(2) -- WEAPON_ICON
             HideHudComponentThisFrame(3) -- CASH
             HideHudComponentThisFrame(4) -- MP_CASH
@@ -115,30 +114,17 @@ CreateThread(function()
 end)
 
 -- Events
--- qbcore events
-RegisterNetEvent('hud:client:UpdateNeeds', function(h, t)
-    PLAYER.Hunger = h
-    PLAYER.Thirst = t
-end)
-
-if Config.Stress then
-    RegisterNetEvent('hud:client:UpdateStress', function(s)
-        PLAYER.Stress = s
-    end)
-end
-
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
     PLAYER.Loaded = true
 end)
 
--- esx events
 RegisterNetEvent('esx:playerLoaded', function()
     PLAYER.Loaded = true
 end)
 
 -- Funcs
 function getPlayerMoney(account)
-    if GetResourceState('es_exteded') == 'started' then
+    if GetResourceState('es_extended') == 'started' then
         for i,v in pairs(ESX.GetPlayerData().accounts) do
             if v.name == account then
                 return groupDigits(v.money)
@@ -157,17 +143,17 @@ end
 
 function getPlayerStatus()
     if GetResourceState('es_extended') == 'started' then
-        TriggerEvent('esx_status:getStatus', 'thirst', function(status)
-            PLAYER.Thirst = status.getPercent()
+        AddEventHandler('esx_status:onTick', function(status)
+            for i,v in pairs(status) do
+                if v.name == 'hunger' then 
+                    PLAYER.Hunger = v.percent
+                elseif v.name == 'thirst' then 
+                    PLAYER.Thirst = v.percent
+                elseif v.name == 'stress' then 
+                    PLAYER.Stress = v.percent
+                end
+            end
         end)
-        TriggerEvent('esx_status:getStatus', 'hunger', function(status)
-            PLAYER.Hunger = status.getPercent()
-        end)
-        if Config.Stress then
-            TriggerEvent('esx_status:getStatus', 'stress', function(status)
-                PLAYER.Stress = status.getPercent()
-            end)
-        end
     else
         PLAYER.Thirst = QBCore.PlayerData.metadata['thirst']
         PLAYER.Hunger = QBCore.PlayerData.metadata['hunger']
@@ -195,4 +181,3 @@ function Notify(text, time)
     AddTextComponentString(text)
     DrawSubtitleTimed(time, 1)
 end
-
