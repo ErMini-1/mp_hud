@@ -1,0 +1,51 @@
+<html>
+    <head> 
+        <script src="nui://game/ui/jquery.js" type="text/javascript"></script>
+        <link href="style.css" rel="stylesheet" type="text/css"/> 
+        <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css">
+        <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <!-- Hud developed by Mini and ElPatron -->
+        <div id="app" v-if="!config.paused">
+            <div id="status">
+                <div id="content">
+                    <div v-for="stat in status" v-if="stat.value > 0" v-bind:style="{ color: stat.color }" id="myStat" >
+                        <span v-html="stat.icon"></span>
+                        <hr v-bind:style="{ width: stat.value, backgroundColor: stat.color }"> 
+                    </div>
+                </div>
+            </div>
+
+            <div id="location" v-if="config.inVehicle">
+                <div id="streetname"><i class="fas fa-map-marker"><a id="streetname-content">{{street.main_street}}</a></i></div>
+                <div id="substreet">{{street.substreet}}</div>
+            </div>
+
+            <div id="accounts"> 
+                <div v-for="job in jobs" v-if="job.value != null" v-bind:style="{ color: job.color }"> 
+                    <a style="margin-right: 10px">{{ job.value }}</a> 
+                    <span v-if="job.value" v-html="job.icon"></span>
+                </div>
+                <div v-for="account in accounts" v-if="account.value != null" v-bind:style="{ color: account.color }"> 
+                    <a>{{ account.value }}</a>
+                    <i id="dollar-icon" class="fas fa-dollar-sign"></i>
+                    <span v-html="account.icon"></span>
+                </div>
+            </div>
+
+            <div id="speedometer" v-if="config.inVehicle">
+                <a id="vehicle-speed">{{speedometer.speed}}</a>
+                <a id="vehicle-gear">{{speedometer.gear}}</a>
+                <i class="fas fa-gas-pump"></i>
+                <hr id="vehicleFuel"/>
+                <div><a>{{speedometer.speedunit}}</a><a id="gear-text">{{speedometer.geartext}}</a></div>
+            </div>
+
+            <img id="logo" v-bind:src="config.logo" height="10%">
+        </div>
+
+        <script src="script.js"></script>
+    </body>
+</html>
