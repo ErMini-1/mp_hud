@@ -4,7 +4,7 @@ Config.Locale = 'en'
 
 Config.DisplayRadar = true -- Only show radar when player is into vehicle.
 Config.SpeedUnit = 'kmh' -- kmh/mph
-Config.EnableDobleJob = true -- Only for esx
+Config.EnableDobleJob = false -- Only for esx
 Config.Logo = "" -- Server logo
 Config.Commands = {
     RefreshRate = 'refreshrate'

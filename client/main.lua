@@ -54,13 +54,17 @@ CreateThread(function()
             local PlayerVehicle = GetVehiclePedIsIn(Player)
             if GetResourceState('es_extended') == 'started' then
                 local PD = ESX.GetPlayerData()
-                job = PD.job.label.." - "..PD.job.grade_label
-                if Config.EnableDobleJob then
-                    dobleJob = PD.job2.label.." - "..PD.job2.grade_label
+                if PD.job ~= nil then
+                    job = PD.job.label.." - "..PD.job.grade_label
+                    if Config.EnableDobleJob and PD.job2 ~= nil then
+                        dobleJob = PD.job2.label.." - "..PD.job2.grade_label
+                    end
                 end
             else
                 local PD = QBCore.PlayerData
-                job = PD.job.label.." - "..PD.job.grade.name
+                if PD.job ~= nil then
+                    job = PD.job.label.." - "..PD.job.grade.name
+                end
             end
             getPlayerStatus()
             SendNUIMessage({
@@ -117,6 +121,7 @@ end)
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
     PLAYER.Loaded = true
 end)
+
 
 RegisterNetEvent('esx:playerLoaded', function()
     PLAYER.Loaded = true
