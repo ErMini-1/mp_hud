@@ -50,7 +50,7 @@ CreateThread(function()
         if PLAYER.Loaded then
             local Player = PlayerPedId()
             local PlayerCoords = GetEntityCoords(Player)
-            local street1, street2 = GetStreetNameAtCoord(PlayerCoords, Citizen.ResultAsInteger(), Citizen.ResultAsInteger())
+            local street1, street2 = GetStreetNameAtCoord(PlayerCoords.x, PlayerCoords.y, PlayerCoords.z, Citizen.ResultAsInteger(), Citizen.ResultAsInteger())
             local PlayerVehicle = GetVehiclePedIsIn(Player)
             if GetResourceState('es_extended') == 'started' then
                 local PD = ESX.GetPlayerData()
@@ -71,7 +71,7 @@ CreateThread(function()
                 bank = getPlayerMoney('bank'),
                 money = getPlayerMoney(cash),
                 vehicle = (PlayerVehicle ~= 0),
-                main_street = Script.Zones[GetNameOfZone(PlayerCoords)],
+                main_street = Script.Zones[GetNameOfZone(PlayerCoords.x, PlayerCoords.y, PlayerCoords.z)],
                 substreet = GetStreetNameFromHashKey(street2),
                 stamina = 100 - GetPlayerSprintStaminaRemaining(PlayerId()),
                 pause = IsPauseMenuActive(), 
