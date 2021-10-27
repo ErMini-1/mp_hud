@@ -96,19 +96,8 @@ CreateThread(function()
                 job2 = dobleJob
             })
 
-            HideHudComponentThisFrame(2) -- WEAPON_ICON
-            HideHudComponentThisFrame(3) -- CASH
-            HideHudComponentThisFrame(4) -- MP_CASH
-            HideHudComponentThisFrame(6) -- MP_MESSAGE
-            HideHudComponentThisFrame(7) -- VEHICLE_NAME
-            HideHudComponentThisFrame(8) -- AREA_NAME
-            HideHudComponentThisFrame(9) -- STREET_NAME
-            HideHudComponentThisFrame(13) -- CASH_CHANGE
-            HideHudComponentThisFrame(17) -- SAVING_GAME
-            HideHudComponentThisFrame(20) -- WEAPON_WHEEL_STATS
-
             if Config.DisplayRadar then
-                if not IsPedInAnyVehicle(PlayerPedId(), false) then 
+                if not IsPedInAnyVehicle(PlayerPedId(), false) then
                     DisplayRadar(false)
                 else
                     DisplayRadar(true)
