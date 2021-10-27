@@ -8,7 +8,7 @@ Script = {
     }
 }
 PLAYER = {
-    RefreshRate = 1, -- Default hud refresh rate
+    RefreshRate = 0.5, -- Default hud refresh rate
     Hunger = 0,
     Thirst = 0,
     Stress = 0,
