@@ -107,7 +107,7 @@ var app = new Vue({
             } else {
                 $('#status').animate({left: "6%"}, 500); 
             }
- 
+
             /* Status */            
             this.status.hunger.value = event.data.hunger
             this.status.thirst.value = event.data.thirst

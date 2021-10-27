@@ -1,14 +1,17 @@
+local esxState <const> = GetResourceState('es_extended') == 'started'
+local qbState <const> = GetResourceState('qb-core') == 'started'
+
 -- Vars
-ESX = nil
+local ESX = nil
 Script = {
     Zones = { ['golf'] = "Los Santos Golf Club", ['AIRP'] = "Los Santos International Airport", ['ALAMO'] = "Alamo Sea", ['ALTA'] = "Alta", ['ARMYB'] = "Fort Zancudo", ['BANHAMC'] = "Banham Canyon Dr", ['BANNING'] = "Banning", ['BEACH'] = "Vespucci Beach", ['BHAMCA'] = "Banham Canyon", ['BRADP'] = "Braddock Pass", ['BRADT'] = "Braddock Tunnel", ['BURTON'] = "Burton", ['CALAFB'] = "Calafia Bridge", ['CANNY'] = "Raton Canyon", ['CCREAK'] = "Cassidy Creek", ['CHAMH'] = "Chamberlain Hills", ['CHIL'] = "Vinewood Hills", ['CHU'] = "Chumash", ['CMSW'] = "Chiliad Mountain State Wilderness", ['CYPRE'] = "Cypress Flats", ['DAVIS'] = "Davis", ['DELBE'] = "Del Perro Beach", ['DELPE'] = "Del Perro", ['DELSOL'] = "La Puerta", ['DESRT'] = "Grand Senora Desert", ['DOWNT'] = "Downtown", ['DTVINE'] = "Downtown Vinewood", ['EAST_V'] = "East Vinewood", ['EBURO'] = "El Burro Heights", ['ELGORL'] = "El Gordo Lighthouse", ['ELYSIAN'] = "Elysian Island", ['GALFISH'] = "Galilee", ['GOLF'] = "GWC and Golfing Society", ['GRAPES'] = "Grapeseed", ['GREATC'] = "Great Chaparral", ['HARMO'] = "Harmony", ['HAWICK'] = "Hawick", ['HORS'] = "Vinewood Racetrack", ['HUMLAB'] = "Humane Labs and Research", ['JAIL'] = "Bolingbroke Penitentiary", ['KOREAT'] = "Little Seoul", ['LACT'] = "Land Act Reservoir", ['LAGO'] = "Lago Zancudo", ['LDAM'] = "Land Act Dam", ['LEGSQU'] = "Legion Square", ['LMESA'] = "La Mesa", ['LOSPUER'] = "La Puerta", ['MIRR'] = "Mirror Park", ['MORN'] = "Morningwood", ['MOVIE'] = "Richards Majestic", ['MTCHIL'] = "Mount Chiliad", ['MTGORDO'] = "Mount Gordo", ['MTJOSE'] = "Mount Josiah", ['MURRI'] = "Murrieta Heights", ['NCHU'] = "North Chumash", ['NOOSE'] = "N.O.O.S.E", ['OCEANA'] = "Pacific Ocean", ['PALCOV'] = "Paleto Cove", ['PALETO'] = "Paleto Bay", ['PALFOR'] = "Paleto Forest", ['PALHIGH'] = "Palomino Highlands", ['PALMPOW'] = "Palmer-Taylor Power Station", ['PBLUFF'] = "Pacific Bluffs", ['PBOX'] = "Pillbox Hill", ['PROCOB'] = "Procopio Beach", ['RANCHO'] = "Rancho", ['RGLEN'] = "Richman Glen", ['RICHM'] = "Richman", ['ROCKF'] = "Rockford Hills", ['RTRAK'] = "Redwood Lights Track", ['SANAND'] = "San Andreas", ['SANCHIA'] = "San Chianski Mountain Range", ['SANDY'] = "Sandy Shores", ['SKID'] = "Mission Row", ['SLAB'] = "Stab City", ['STAD'] = "Maze Bank Arena", ['STRAW'] = "Strawberry", ['TATAMO'] = "Tataviam Mountains", ['TERMINA'] = "Terminal", ['TEXTI'] = "Textile City", ['TONGVAH'] = "Tongva Hills", ['TONGVAV'] = "Tongva Valley", ['VCANA'] = "Vespucci Canals", ['VESP'] = "Vespucci", ['VINE'] = "Vinewood", ['WINDF'] = "Ron Alternates Wind Farm", ['WVINE'] = "West Vinewood", ['ZANCUDO'] = "Zancudo River", ['ZP_ORT'] = "Port of South Los Santos", ['ZQ_UAR'] = "Davis Quartz" },
     Speeds = {
         ['kmh'] = 3.6,
-        ['mph'] = 2.236936
+        ['mph'] = 2.23693629
     }
 }
 PLAYER = {
-    RefreshRate = 1, -- Default hud refresh rate
+    RefreshRate = 0.5, -- Default hud refresh rate
     Hunger = 0,
     Thirst = 0,
     Stress = 0,
@@ -16,7 +19,7 @@ PLAYER = {
 }
 
 -- Core init
-if GetResourceState('es_extended') == 'started' then
+if esxState then
     -- If u use esx_legacy u can remove this and add import in the fxmanifest.lua
     CreateThread(function()
         while ESX == nil do
@@ -25,7 +28,7 @@ if GetResourceState('es_extended') == 'started' then
         end
     end)
 
-elseif GetResourceState('qb-core') == 'started' then
+elseif qbState then
     QBCore = exports['qb-core']:GetSharedObject()
 end
 
@@ -41,7 +44,7 @@ end)
 
 CreateThread(function()
     local cash = 'money'
-    if GetResourceState('qb-core') == 'started' then
+    if qbState then
         cash = 'cash'
     end
     local job = ""
@@ -50,9 +53,9 @@ CreateThread(function()
         if PLAYER.Loaded then
             local Player = PlayerPedId()
             local PlayerCoords = GetEntityCoords(Player)
-            local street1, street2 = GetStreetNameAtCoord(PlayerCoords, Citizen.ResultAsInteger(), Citizen.ResultAsInteger())
+            local _, street2 = GetStreetNameAtCoord(PlayerCoords.x, PlayerCoords.y, PlayerCoords.z, Citizen.ResultAsInteger(), Citizen.ResultAsInteger())
             local PlayerVehicle = GetVehiclePedIsIn(Player)
-            if GetResourceState('es_extended') == 'started' then
+            if esxState then
                 local PD = ESX.GetPlayerData()
                 if PD.job ~= nil then
                     job = PD.job.label.." - "..PD.job.grade_label
@@ -71,7 +74,7 @@ CreateThread(function()
                 bank = getPlayerMoney('bank'),
                 money = getPlayerMoney(cash),
                 vehicle = (PlayerVehicle ~= 0),
-                main_street = Script.Zones[GetNameOfZone(PlayerCoords)],
+                main_street = Script.Zones[GetNameOfZone(PlayerCoords.x, PlayerCoords.y, PlayerCoords.z)],
                 substreet = GetStreetNameFromHashKey(street2),
                 stamina = 100 - GetPlayerSprintStaminaRemaining(PlayerId()),
                 pause = IsPauseMenuActive(), 
@@ -93,19 +96,8 @@ CreateThread(function()
                 job2 = dobleJob
             })
 
-            HideHudComponentThisFrame(2) -- WEAPON_ICON
-            HideHudComponentThisFrame(3) -- CASH
-            HideHudComponentThisFrame(4) -- MP_CASH
-            HideHudComponentThisFrame(6) -- MP_MESSAGE
-            HideHudComponentThisFrame(7) -- VEHICLE_NAME
-            HideHudComponentThisFrame(8) -- AREA_NAME
-            HideHudComponentThisFrame(9) -- STREET_NAME
-            HideHudComponentThisFrame(13) -- CASH_CHANGE
-            HideHudComponentThisFrame(17) -- SAVING_GAME
-            HideHudComponentThisFrame(20) -- WEAPON_WHEEL_STATS
-
             if Config.DisplayRadar then
-                if not IsPedInAnyVehicle(PlayerPedId(), false) then 
+                if not IsPedInAnyVehicle(PlayerPedId(), false) then
                     DisplayRadar(false)
                 else
                     DisplayRadar(true)
@@ -129,7 +121,7 @@ end)
 
 -- Funcs
 function getPlayerMoney(account)
-    if GetResourceState('es_extended') == 'started' then
+    if esxState then
         for i,v in pairs(ESX.GetPlayerData().accounts) do
             if v.name == account then
                 return groupDigits(v.money)
@@ -147,9 +139,9 @@ function groupDigits(value)
 end
 
 function getPlayerStatus()
-    if GetResourceState('es_extended') == 'started' then
+    if esxState then
         AddEventHandler('esx_status:onTick', function(status)
-            for i,v in pairs(status) do
+            for _, v in pairs(status) do
                 if v.name == 'hunger' then 
                     PLAYER.Hunger = v.percent
                 elseif v.name == 'thirst' then 
@@ -173,7 +165,6 @@ function getVehicleData(Player, PlayerVehicle)
         local speed = math.floor((GetEntitySpeed(PlayerVehicle) * Script.Speeds[Config.SpeedUnit]) + 0.5)
         local gear = GetVehicleCurrentGear(PlayerVehicle)
         local fuel = math.floor(GetVehicleFuelLevel(PlayerVehicle))
-        
         return {speed = speed, gear = gear, fuel = fuel}
     else
         return {speed = 0, gear = 0, fuel = 0}

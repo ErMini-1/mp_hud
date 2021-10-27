@@ -5,19 +5,17 @@ author 'Patron and Mini'
 description 'Simple RP Hud for ESX/QBCore'
 
 lua54 'yes'
-
-ui_page 'html/index.html'
+use_fxv2_oal 'yes'
 
 client_scripts {
+    'config.lua',
     'client/main.lua'
 }
 
-shared_scripts {
-    'config.lua'
-}
+ui_page 'html/index.html'
 
-files ({
+files {
     'html/index.html',
     'html/script.js',
     'html/style.css'
-})
+}
