@@ -1,5 +1,5 @@
-local esxState = GetResourceState('es_extended') == 'started'
-local qbState = GetResourceState('qb-core') == 'started'
+local esxState <const> = GetResourceState('es_extended') == 'started'
+local qbState <const> = GetResourceState('qb-core') == 'started'
 
 -- Vars
 local ESX = nil
