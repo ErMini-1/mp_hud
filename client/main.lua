@@ -26,7 +26,7 @@ if GetResourceState('es_extended') == 'started' then
     end)
 
 elseif GetResourceState('qb-core') == 'started' then
-    QBCore = exports['qb-core']:GetSharedObject()
+    QBCore = exports['qb-core']:GetCoreObject()
 end
 
 -- Commands
