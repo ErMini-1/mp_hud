@@ -118,12 +118,20 @@ CreateThread(function()
 end)
 
 -- Events
-RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
+AddEventHandler('onResourceStop', function(res)
+    if res == GetCurrentResourceName() then
+        PLAYER.Loaded = true
+    end
+end)
+
+RegisterNetEvent('QBCore:Client:OnPlayerLoaded')
+AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
     PLAYER.Loaded = true
 end)
 
 
-RegisterNetEvent('esx:playerLoaded', function()
+RegisterNetEvent('esx:playerLoaded')
+AddEventHandler('esx:playerLoaded', function()
     PLAYER.Loaded = true
 end)
 
